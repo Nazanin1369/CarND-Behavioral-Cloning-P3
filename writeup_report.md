@@ -15,20 +15,27 @@ The goals / steps of this project are the following:
 [image1]: ./examples/raw_samples-histogram.png "Raw data histogram"
 [image2]: ./examples/center_2016_12_01_13_38_26_805.jpg "High steering"
 [image3]: ./examples/center_2016_12_01_13_38_42_894.jpg "High steering"
-[image4]: ./examples/placeholder_small.png "Histogram after filter"
-[image5]: ./examples/placeholder_small.png "Brightness 1"
-[image6]: ./examples/placeholder_small.png "Brightness 2"
-[image7]: ./examples/placeholder_small.png "Brightness 3"
-[image6]: ./examples/placeholder_small.png "Normal Image"
-[image7]: ./examples/augment_flipped_center_2016_12_01_13_44_57_783.jpg "Flipped Image"
+[image4]: ./examples/filtered_samples-histogram.png "Histogram after filter"
+[image5]: ./examples/augment_brightness_center_2016_12_01_13_31_15_411.jpg "Brightness 1"
+[image6]: ./examples/augment_brightness_center_2016_12_01_13_32_39_212.jpg "Brightness 2"
+[image7]: ./examples/augment_brightness_center_2016_12_01_13_32_42_446.jpg "Brightness 3"
+[image8]: ./examples/augment_shadow_right_2016_12_01_13_33_54_476.jpg "Shadow 1"
+[image9]: ./examples/augment_shadow_right_2016_12_01_13_33_55_184.jpg "Shadow 2"
+[image10]: ./examples/augment_shadow_right_2016_12_01_13_33_55_285.jpg "Shadow 3"
+[image11]: ./examples/augment_shift_center_2016_12_01_13_35_21_674.jpg "Shift 1"
+[image12]: ./examples/augment_shift_center_2016_12_01_13_35_21_776.jpg "Shift 2"
+[image13]: ./examples/augment_shift_center_2016_12_01_13_35_24_534.jpg "Shift 3"
+[image14]: ./examples/center_2016_12_01_13_44_57_783.jpg "Un-flipped Image"
+[image15]: ./examples/augment_flipped_center_2016_12_01_13_44_57_783.jpg "Flipped Image"
+[image16]: ./examples/with_flipped_samples-histogram.png "Final Histogram"
 
 ## Rubric Points
 ###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
 
 ---
-###Files Submitted & Code Quality
+## Files Submitted & Code Quality
 
-####1. Submission includes all required files and can be used to run the simulator in autonomous mode
+#### 1. Submission includes all required files and can be used to run the simulator in autonomous mode
 
 My project includes the following files:
 * model.py containing the script to create and train the model
@@ -37,19 +44,19 @@ My project includes the following files:
 * myutils.py containing the code for data loading and augmentation
 * writeup_report.md or writeup_report.pdf summarizing the results
 
-####2. Submission includes functional code
+#### 2. Submission includes functional code
 Using the Udacity provided simulator and my drive.py file, the car can be driven autonomously around the track by executing 
 ```sh
 python drive.py model.h5
 ```
 
-####3. Submission code is usable and readable
+#### 3. Submission code is usable and readable
 
 The model.py file contains the code for training and saving the convolution neural network. The file shows the pipeline I used for training and validating the model, and it contains comments to explain how the code works.
 
-###Model Architecture and Training Strategy
+### Model Architecture and Training Strategy
 
-####1. An appropriate model architecture has been employed
+#### 1. An appropriate model architecture has been employed
 
 I started with with a simple model with 2 convolutions and a fully-connected layer, just to test that my code is working.   Once everything started to fit in together, I finally adapted the model used by NVIDIA as described in this paper  - https://arxiv.org/abs/1604.07316.
 
@@ -59,32 +66,32 @@ The model includes ELU layers to introduce nonlinearity (code line 66, 68, 70, 7
 
 As suggested in the lessons, I added a Cropping2D layer that is useful for choosing an area of interest that excludes the sky and/or the hood of the car (code line 63). 
 
-####2. Attempts to reduce overfitting in the model
+#### 2. Attempts to reduce overfitting in the model
 
 The model contains dropout layers with a rate of 0.3 in order to reduce overfitting (model.py lines 79, 81). 
 
 The model was trained and validated on the Udacity-provided data and data I generated as part of augmentation. The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
 
-####3. Model parameter tuning
+#### 3. Model parameter tuning
 
 The model used an adam optimizer.  The initial learning rate was set to 0.001 (model.py line 23, 88).
 
-####4. Appropriate training data
+#### 4. Appropriate training data
 
 Training data used is that from Udacity plus additional data created in augmentation stage. 
 
 For details about how I created the training data, see the next section. 
 
-###Model Architecture and Training Strategy
+### Model Architecture and Training Strategy
 
-####1. Solution Design Approach
+#### 1. Solution Design Approach
 
 As mentioned earlier, I adapted the model used by NVIDIA.
 
 With my current setup, this model took time for training. I decided to remove the 1164-neuron Dense layer to reduce parameters and hopefully reduce training time.   This change did not negatively affect the performance of my model so I settled with this final model.   
 
 
-####2. Final Model Architecture
+#### 2. Final Model Architecture
 
 The final model architecture (model.py lines 60-92) consisted of a convolution neural network with the following layers and layer sizes ...
 
@@ -195,24 +202,24 @@ The image on the bridge looks like an anomaly as this is a straight line.  This 
 
 I tried the model with the data after filtering.  For this first attempt, the car did not complete the track and would veer off the drivable portion of the track.   I attribute this to the reduced number of data available for the model to learn from.  Clearly, I would have to add more by augmenting.
 
-####Use Left and Right camera images   
+**Use Left and Right camera images**   
 The simulator captures images from three cameras mounted on the car: a center, right and left camera.  I used the left and right images with a steering correction of 0.28.
 
             correction = 0.28
             steering_left = steering_center + correction
             steering_right = steering_center - correction
 
-####Add Brightness, shadows, horizontal shift, and flipped images
+**Add Brightness, shadows, horizontal shift, and flipped images**
 I utilized the augmentation ideas and code from Vivek Yadav's work.   However, I only performed these augmentation for images with steering angles greater than 0.20. The purpose of this is to add more representation from higher angled steering to improve the distribution of the data. Below are sample images:
 Adding ramdom brightness:
 
 
-Adding ramdom shadow:
+## Adding ramdom shadow:
 
-Adding horizontal shift
+## Adding horizontal shift
 
 
-Flipping
+## Flipping
 
 After performing these augmentation, we ended up with 12779 samples.  After adding the flipped images, our data distribution looks like this.   It is still not the ideal balance of data I was going for but looks like these can work.
 
