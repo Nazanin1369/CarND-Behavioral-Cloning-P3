@@ -13,10 +13,12 @@ The goals / steps of this project are the following:
 [//]: # (Image References)
 
 [image1]: ./examples/raw_samples-histogram.png "Raw data histogram"
-[image2]: ./examples/placeholder.png "Grayscaling"
-[image3]: ./examples/placeholder_small.png "Recovery Image"
-[image4]: ./examples/placeholder_small.png "Recovery Image"
-[image5]: ./examples/placeholder_small.png "Recovery Image"
+[image2]: ./examples/center_2016_12_01_13_38_26_805.jpg "High steering"
+[image3]: ./examples/center_2016_12_01_13_38_42_894.jpg "High steering"
+[image4]: ./examples/placeholder_small.png "Histogram after filter"
+[image5]: ./examples/placeholder_small.png "Brightness 1"
+[image6]: ./examples/placeholder_small.png "Brightness 2"
+[image7]: ./examples/placeholder_small.png "Brightness 3"
 [image6]: ./examples/placeholder_small.png "Normal Image"
 [image7]: ./examples/augment_flipped_center_2016_12_01_13_44_57_783.jpg "Flipped Image"
 
@@ -184,20 +186,25 @@ I ended up just using the Udacity training data as my baseline.   But looking at
 
 I was also curious what part of the track generated higher steering angles.   Here are samples of steering angles above 0.9.
 
+![alt text][image2] 
+![alt text][image3]
 
-The image on the bridge looks like an anomaly as this is a stright line.  This could have been a result of the driver making a quick steering adjustment in this part of the track.  To eliminate this cases, I decided to filter also steering angles greater than 0.9.  Here is the distribution after the filter. 
+
+The image on the bridge looks like an anomaly as this is a straight line.  This could have been a result of the driver making a quick steering adjustment in this part of the track.  To eliminate these cases, I decided to also filter out steering angles greater than 0.9.  Here is the distribution after the filter. 
+
 
 I tried the model with the data after filtering.  For this first attempt, the car did not complete the track and would veer off the drivable portion of the track.   I attribute this to the reduced number of data available for the model to learn from.  Clearly, I would have to add more by augmenting.
 
-   
+####Use Left and Right camera images   
 The simulator captures images from three cameras mounted on the car: a center, right and left camera.  I used the left and right images with a steering correction of 0.28.
 
             correction = 0.28
             steering_left = steering_center + correction
             steering_right = steering_center - correction
 
+####Add Brightness, shadows, horizontal shift, and flipped images
 I utilized the augmentation ideas and code from Vivek Yadav's work.   However, I only performed these augmentation for images with steering angles greater than 0.20. The purpose of this is to add more representation from higher angled steering to improve the distribution of the data. Below are sample images:
-Adding ramdom brightness brightness:
+Adding ramdom brightness:
 
 
 Adding ramdom shadow:
@@ -207,35 +214,15 @@ Adding horizontal shift
 
 Flipping
 
-After performing these augmentation, we ended up with x samples.  After adding the flipped images, our data distribution looks like these.   It is still not the ideal balance of data I was going for but looks like these can work.
+After performing these augmentation, we ended up with 12779 samples.  After adding the flipped images, our data distribution looks like this.   It is still not the ideal balance of data I was going for but looks like these can work.
+
+![alt text][image7]
 
 I used a 80-20 split on the data, 20% being used for validation.
 
 Working with images takes a huge chunk of memory to be used especially if the images are loaded all at the same time.  To avoid hitting memory limitations, I used Keras generators to provide just-in-time loading of the image files that are fed to the model during training.   I used a batch size of 32 samples.
 
-I set the number of epochs to 6.  Surprisingly, the best performance came out of epoch number 2.
+I set the number of epochs to 6.  Surprisingly, the best performance came out of epoch number 2.  With this model, the car is able complete Track1 successfully.
 
 
-![alt text][image2]
 
-I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to .... These images show what a recovery looks like starting from ... :
-
-![alt text][image3]
-![alt text][image4]
-![alt text][image5]
-
-Then I repeated this process on track two in order to get more data points.
-
-To augment the data sat, I also flipped images and angles thinking that this would ... For example, here is an image that has then been flipped:
-
-![alt text][image6]
-![alt text][image7]
-
-Etc ....
-
-After the collection process, I had X number of data points. I then preprocessed this data by ...
-
-
-I finally randomly shuffled the data set and put Y% of the data into a validation set. 
-
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was Z as evidenced by ... I used an adam optimizer so that manually training the learning rate wasn't necessary.
