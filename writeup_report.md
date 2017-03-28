@@ -12,13 +12,13 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image1]: ./examples/placeholder.png "Model Visualization"
+[image1]: ./examples/raw_samples-histogram.png "Raw data histogram"
 [image2]: ./examples/placeholder.png "Grayscaling"
 [image3]: ./examples/placeholder_small.png "Recovery Image"
 [image4]: ./examples/placeholder_small.png "Recovery Image"
 [image5]: ./examples/placeholder_small.png "Recovery Image"
 [image6]: ./examples/placeholder_small.png "Normal Image"
-[image7]: ./examples/placeholder_small.png "Flipped Image"
+[image7]: ./examples/augment_flipped_center_2016_12_01_13_44_57_783.jpg "Flipped Image"
 
 ## Rubric Points
 ###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
@@ -51,25 +51,25 @@ The model.py file contains the code for training and saving the convolution neur
 
 I started with with a simple model with 2 convolutions and a fully-connected layer, just to test that my code is working.   Once everything started to fit in together, I finally adapted the model used by NVIDIA as described in this paper  - https://arxiv.org/abs/1604.07316.
 
-My model consists of a convolution neural network having 3 convolution layers with 5x5 filters and another 2 convolution layers with 3x3 filters. sizes and depths between 32 and 128 (model.py lines 18-24). This is followed by 3 fully-connected layers and a final layer for the steering angle predicted value.
+My model consists of a convolution neural network having 3 convolution layers with 5x5 filters and another 2 convolution layers with 3x3 filters. This is followed by 3 fully-connected layers and a final layer for the steering angle predicted value (model.py lines 60-92).
 
-The model includes ELU layers to introduce nonlinearity (code line 20), and the data is normalized in the model using a Keras lambda layer (code line 18). 
+The model includes ELU layers to introduce nonlinearity (code line 66, 68, 70, 73, 75), and the data is normalized in the model using a Keras lambda layer (code line 62). 
 
-As suggested in the lessons, I added a Cropping2D layer that is useful for choosing an area of interest that excludes the sky and/or the hood of the car. 
+As suggested in the lessons, I added a Cropping2D layer that is useful for choosing an area of interest that excludes the sky and/or the hood of the car (code line 63). 
 
 ####2. Attempts to reduce overfitting in the model
 
-The model contains dropout layers with a rate of 0.3 in order to reduce overfitting (model.py lines 21). 
+The model contains dropout layers with a rate of 0.3 in order to reduce overfitting (model.py lines 79, 81). 
 
-The model was trained and validated on the Udacity-provided data and data I generated as part of augmentation.to ensure that the model was not overfitting (code line 10-16). The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
+The model was trained and validated on the Udacity-provided data and data I generated as part of augmentation. The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
 
 ####3. Model parameter tuning
 
-The model used an adam optimizer.  The initial learning rate was set to 0.001 (model.py line 25).
+The model used an adam optimizer.  The initial learning rate was set to 0.001 (model.py line 23, 88).
 
 ####4. Appropriate training data
 
-Training data was chosen to keep the vehicle driving on the road. I used a combination of center lane driving, recovering from the left and right sides of the road ... 
+Training data used is that from Udacity plus additional data created in augmentation stage. 
 
 For details about how I created the training data, see the next section. 
 
@@ -77,23 +77,14 @@ For details about how I created the training data, see the next section.
 
 ####1. Solution Design Approach
 
-The overall strategy for deriving a model architecture was to ...
+As mentioned earlier, I adapted the model used by NVIDIA.
 
-My first step was to use a convolution neural network model similar to the ... I thought this model might be appropriate because ...
+With my current setup, this model took time for training. I decided to remove the 1164-neuron Dense layer to reduce parameters and hopefully reduce training time.   This change did not negatively affect the performance of my model so I settled with this final model.   
 
-In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. I found that my first model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting. 
-
-To combat the overfitting, I modified the model so that ...
-
-Then I ... 
-
-The final step was to run the simulator to see how well the car was driving around track one. There were a few spots where the vehicle fell off the track... to improve the driving behavior in these cases, I ....
-
-At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
 
 ####2. Final Model Architecture
 
-The final model architecture (model.py lines 18-24) consisted of a convolution neural network with the following layers and layer sizes ...
+The final model architecture (model.py lines 60-92) consisted of a convolution neural network with the following layers and layer sizes ...
 
 Layer (type)                     Output Shape          Param #     Connected to                     
 
@@ -182,13 +173,14 @@ Trainable params: 559,419
 Non-trainable params: 0
 
 
-Here is a visualization of the architecture (note: visualizing the architecture is optional according to the project rubric)
+A visualization of the architecture can be found here: https://arxiv.org/pdf/1604.07316.pdf
 
-![alt text][image1]
 
 ####3. Creation of the Training Set & Training Process
 
-I ended up just using the Udacity training data as my baseline.   But looking at the distribution of the steering angles, it looks like there is an abundance of zero or near-zero angles.  This means that there are more data driving in staight than curved lanes.  This is not ideal since our model learning could end up having a bias on stright line driving.  We need to filter this data.  Below is the distribution of the raw data.
+I ended up just using the Udacity training data as my baseline.   But looking at the distribution of the steering angles, it looks like there is an abundance of zero or near-zero angles.  This means that there are more data driving in straight than curved lanes.  This is not ideal since our model learning could end up having a bias on straight line driving.  We need to filter this data.  Below is the distribution of the raw data.
+
+![alt text][image1]
 
 I was also curious what part of the track generated higher steering angles.   Here are samples of steering angles above 0.9.
 
@@ -217,13 +209,11 @@ Flipping
 
 After performing these augmentation, we ended up with x samples.  After adding the flipped images, our data distribution looks like these.   It is still not the ideal balance of data I was going for but looks like these can work.
 
-
 I used a 80-20 split on the data, 20% being used for validation.
 
 Working with images takes a huge chunk of memory to be used especially if the images are loaded all at the same time.  To avoid hitting memory limitations, I used Keras generators to provide just-in-time loading of the image files that are fed to the model during training.   I used a batch size of 32 samples.
 
 I set the number of epochs to 6.  Surprisingly, the best performance came out of epoch number 2.
-
 
 
 ![alt text][image2]
