@@ -218,7 +218,7 @@ I utilized the augmentation ideas and code from Vivek Yadav's work.   However, I
 ![alt text][image6]
 ![alt text][image7]
 
-### Adding ramdom shadow:
+### Adding random shadow:
 ![alt text][image8]
 ![alt text][image9]
 ![alt text][image10]
@@ -230,13 +230,14 @@ I utilized the augmentation ideas and code from Vivek Yadav's work.   However, I
 
 ### Flipping
 
-After performing these augmentation, we ended up with 12779 samples.  After adding the flipped images, our data distribution looks like this.   It is still not the ideal balance of data I was going for but looks like these can work.
-
 Unflipped image
 ![alt text][image14]
 
 Flipped image
 ![alt text][image15]
+
+After performing these augmentation, we ended up with 12779 samples.  After adding the flipped images, our data distribution looks like this.   It is still not the ideal balance of data I was going for but looks like these can work.
+![alt text][image16]
 
 I used a 80-20 split on the data, 20% being used for validation.
 
