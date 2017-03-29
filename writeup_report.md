@@ -13,20 +13,29 @@ The goals / steps of this project are the following:
 [//]: # (Image References)
 
 [image1]: ./examples/raw_samples-histogram.png "Raw data histogram"
-[image2]: ./examples/placeholder.png "Grayscaling"
-[image3]: ./examples/placeholder_small.png "Recovery Image"
-[image4]: ./examples/placeholder_small.png "Recovery Image"
-[image5]: ./examples/placeholder_small.png "Recovery Image"
-[image6]: ./examples/placeholder_small.png "Normal Image"
-[image7]: ./examples/augment_flipped_center_2016_12_01_13_44_57_783.jpg "Flipped Image"
+[image2]: ./examples/center_2016_12_01_13_38_26_805.jpg "High steering 1"
+[image3]: ./examples/center_2016_12_01_13_38_42_894.jpg "High steering 2"
+[image4]: ./examples/filtered_samples-histogram.png "Histogram after filter"
+[image5]: ./examples/augment_brightness_center_2016_12_01_13_31_15_411.jpg "Brightness 1"
+[image6]: ./examples/augment_brightness_center_2016_12_01_13_32_39_212.jpg "Brightness 2"
+[image7]: ./examples/augment_brightness_center_2016_12_01_13_32_42_446.jpg "Brightness 3"
+[image8]: ./examples/augment_shadow_right_2016_12_01_13_33_54_476.jpg "Shadow 1"
+[image9]: ./examples/augment_shadow_right_2016_12_01_13_33_55_184.jpg "Shadow 2"
+[image10]: ./examples/augment_shadow_right_2016_12_01_13_33_55_285.jpg "Shadow 3"
+[image11]: ./examples/augment_shift_center_2016_12_01_13_35_21_674.jpg "Shift 1"
+[image12]: ./examples/augment_shift_center_2016_12_01_13_35_21_776.jpg "Shift 2"
+[image13]: ./examples/augment_shift_center_2016_12_01_13_35_24_534.jpg "Shift 3"
+[image14]: ./examples/center_2016_12_01_13_44_57_783.jpg "Un-flipped Image"
+[image15]: ./examples/augment_flipped_center_2016_12_01_13_44_57_783.jpg "Flipped Image"
+[image16]: ./examples/with_flipped_samples-histogram.png "Final Histogram"
 
 ## Rubric Points
 ###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
 
 ---
-###Files Submitted & Code Quality
+## Files Submitted & Code Quality
 
-####1. Submission includes all required files and can be used to run the simulator in autonomous mode
+#### 1. Submission includes all required files and can be used to run the simulator in autonomous mode
 
 My project includes the following files:
 * model.py containing the script to create and train the model
@@ -35,19 +44,23 @@ My project includes the following files:
 * myutils.py containing the code for data loading and augmentation
 * writeup_report.md or writeup_report.pdf summarizing the results
 
-####2. Submission includes functional code
+#### 2. Submission includes functional code
 Using the Udacity provided simulator and my drive.py file, the car can be driven autonomously around the track by executing 
 ```sh
 python drive.py model.h5
 ```
 
-####3. Submission code is usable and readable
+#### 3. Submission code is usable and readable
 
-The model.py file contains the code for training and saving the convolution neural network. The file shows the pipeline I used for training and validating the model, and it contains comments to explain how the code works.
+The **model.py** file contains the code for training and saving the convolution neural network. The file shows the pipeline I used for training and validating the model, and it contains comments to explain how the code works.
+I used checkpoint code to save the weights and biases of of each epoch run.  This code is based on techniques described in http://machinelearningmastery.com/check-point-deep-learning-models-keras/
 
-###Model Architecture and Training Strategy
+The **myutils.py** file contains the methods for loading and augmenting data.  It also contains methods to help visualize the data.
 
-####1. An appropriate model architecture has been employed
+
+### Model Architecture and Training Strategy
+
+#### 1. An appropriate model architecture has been employed
 
 I started with with a simple model with 2 convolutions and a fully-connected layer, just to test that my code is working.   Once everything started to fit in together, I finally adapted the model used by NVIDIA as described in this paper  - https://arxiv.org/abs/1604.07316.
 
@@ -57,32 +70,32 @@ The model includes ELU layers to introduce nonlinearity (code line 66, 68, 70, 7
 
 As suggested in the lessons, I added a Cropping2D layer that is useful for choosing an area of interest that excludes the sky and/or the hood of the car (code line 63). 
 
-####2. Attempts to reduce overfitting in the model
+#### 2. Attempts to reduce overfitting in the model
 
 The model contains dropout layers with a rate of 0.3 in order to reduce overfitting (model.py lines 79, 81). 
 
 The model was trained and validated on the Udacity-provided data and data I generated as part of augmentation. The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
 
-####3. Model parameter tuning
+#### 3. Model parameter tuning
 
 The model used an adam optimizer.  The initial learning rate was set to 0.001 (model.py line 23, 88).
 
-####4. Appropriate training data
+#### 4. Appropriate training data
 
 Training data used is that from Udacity plus additional data created in augmentation stage. 
 
 For details about how I created the training data, see the next section. 
 
-###Model Architecture and Training Strategy
+### Model Architecture and Training Strategy
 
-####1. Solution Design Approach
+#### 1. Solution Design Approach
 
 As mentioned earlier, I adapted the model used by NVIDIA.
 
 With my current setup, this model took time for training. I decided to remove the 1164-neuron Dense layer to reduce parameters and hopefully reduce training time.   This change did not negatively affect the performance of my model so I settled with this final model.   
 
 
-####2. Final Model Architecture
+#### 2. Final Model Architecture
 
 The final model architecture (model.py lines 60-92) consisted of a convolution neural network with the following layers and layer sizes ...
 
@@ -184,58 +197,57 @@ I ended up just using the Udacity training data as my baseline.   But looking at
 
 I was also curious what part of the track generated higher steering angles.   Here are samples of steering angles above 0.9.
 
+![alt text][image2] 
+![alt text][image3]
 
-The image on the bridge looks like an anomaly as this is a stright line.  This could have been a result of the driver making a quick steering adjustment in this part of the track.  To eliminate this cases, I decided to filter also steering angles greater than 0.9.  Here is the distribution after the filter. 
+
+The image on the bridge looks like an anomaly as this is a straight line.  This could have been a result of the driver making a quick steering adjustment in this part of the track.  To eliminate these cases, I decided to also filter out steering angles greater than 0.9.  Here is the distribution after the filter. 
+
+![alt text][image4]
 
 I tried the model with the data after filtering.  For this first attempt, the car did not complete the track and would veer off the drivable portion of the track.   I attribute this to the reduced number of data available for the model to learn from.  Clearly, I would have to add more by augmenting.
 
-   
+**Use Left and Right camera images**   
 The simulator captures images from three cameras mounted on the car: a center, right and left camera.  I used the left and right images with a steering correction of 0.28.
 
             correction = 0.28
             steering_left = steering_center + correction
             steering_right = steering_center - correction
 
+**Add Brightness, shadows, horizontal shift, and flipped images**
 I utilized the augmentation ideas and code from Vivek Yadav's work.   However, I only performed these augmentation for images with steering angles greater than 0.20. The purpose of this is to add more representation from higher angled steering to improve the distribution of the data. Below are sample images:
-Adding ramdom brightness brightness:
 
+### Adding random brightness:
+![alt text][image5]
+![alt text][image6]
+![alt text][image7]
 
-Adding ramdom shadow:
+### Adding random shadow:
+![alt text][image8]
+![alt text][image9]
+![alt text][image10]
 
-Adding horizontal shift
+### Adding horizontal shift
+![alt text][image11]
+![alt text][image12]
+![alt text][image13]
 
+### Flipping
 
-Flipping
+Unflipped image
+![alt text][image14]
 
-After performing these augmentation, we ended up with x samples.  After adding the flipped images, our data distribution looks like these.   It is still not the ideal balance of data I was going for but looks like these can work.
+Flipped image
+![alt text][image15]
+
+After performing these augmentation, we ended up with 12779 samples.  After adding the flipped images, our data distribution looks like this.   It is still not the ideal balance of data I was going for but looks like these can work.
+![alt text][image16]
 
 I used a 80-20 split on the data, 20% being used for validation.
 
 Working with images takes a huge chunk of memory to be used especially if the images are loaded all at the same time.  To avoid hitting memory limitations, I used Keras generators to provide just-in-time loading of the image files that are fed to the model during training.   I used a batch size of 32 samples.
 
-I set the number of epochs to 6.  Surprisingly, the best performance came out of epoch number 2.
+I set the number of epochs to 6.  Surprisingly, the best performance came out of epoch number 2.  With this model, the car is able complete Track1 successfully.
 
 
-![alt text][image2]
 
-I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to .... These images show what a recovery looks like starting from ... :
-
-![alt text][image3]
-![alt text][image4]
-![alt text][image5]
-
-Then I repeated this process on track two in order to get more data points.
-
-To augment the data sat, I also flipped images and angles thinking that this would ... For example, here is an image that has then been flipped:
-
-![alt text][image6]
-![alt text][image7]
-
-Etc ....
-
-After the collection process, I had X number of data points. I then preprocessed this data by ...
-
-
-I finally randomly shuffled the data set and put Y% of the data into a validation set. 
-
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was Z as evidenced by ... I used an adam optimizer so that manually training the learning rate wasn't necessary.
