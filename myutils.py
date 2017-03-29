@@ -155,7 +155,7 @@ def flip_image(image, angle):
 
     return image, angle
 
-def augment(func, data, prefix, threshold=0.20):
+def augment(func, data, prefix, threshold=0.20, nowrite=True):
 	driving_data = []
 
 	fnprfx = prefix
@@ -178,7 +178,8 @@ def augment(func, data, prefix, threshold=0.20):
 			image, angle = func(image, steering)
 
 			#print('writing image ... : ', aug_fn)
-			cv2.imwrite(aug_fn, image)
+			if (not nowrite):
+				cv2.imwrite(aug_fn, image)
 
 			driving_data.append(DrivingData(fnprfx + dd.image_file, angle, aug_image_dir))
 

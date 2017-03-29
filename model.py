@@ -21,8 +21,7 @@ from keras.callbacks import ModelCheckpoint
 from myutils import *
 
 LEARNING_RATE = .0001
-EPOCHS = 3
-#STEERING_CORRECTION = 0.28
+EPOCHS = 1
 
 MODEL_FILE = 'model.h5'
 
