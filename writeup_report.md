@@ -13,8 +13,8 @@ The goals / steps of this project are the following:
 [//]: # (Image References)
 
 [image1]: ./examples/raw_samples-histogram.png "Raw data histogram"
-[image2]: ./examples/center_2016_12_01_13_38_26_805.jpg "High steering"
-[image3]: ./examples/center_2016_12_01_13_38_42_894.jpg "High steering"
+[image2]: ./examples/center_2016_12_01_13_38_26_805.jpg "High steering 1"
+[image3]: ./examples/center_2016_12_01_13_38_42_894.jpg "High steering 2"
 [image4]: ./examples/filtered_samples-histogram.png "Histogram after filter"
 [image5]: ./examples/augment_brightness_center_2016_12_01_13_31_15_411.jpg "Brightness 1"
 [image6]: ./examples/augment_brightness_center_2016_12_01_13_32_39_212.jpg "Brightness 2"
@@ -199,6 +199,7 @@ I was also curious what part of the track generated higher steering angles.   He
 
 The image on the bridge looks like an anomaly as this is a straight line.  This could have been a result of the driver making a quick steering adjustment in this part of the track.  To eliminate these cases, I decided to also filter out steering angles greater than 0.9.  Here is the distribution after the filter. 
 
+![alt text][image4]
 
 I tried the model with the data after filtering.  For this first attempt, the car did not complete the track and would veer off the drivable portion of the track.   I attribute this to the reduced number of data available for the model to learn from.  Clearly, I would have to add more by augmenting.
 
@@ -211,19 +212,31 @@ The simulator captures images from three cameras mounted on the car: a center, r
 
 **Add Brightness, shadows, horizontal shift, and flipped images**
 I utilized the augmentation ideas and code from Vivek Yadav's work.   However, I only performed these augmentation for images with steering angles greater than 0.20. The purpose of this is to add more representation from higher angled steering to improve the distribution of the data. Below are sample images:
-Adding ramdom brightness:
 
+### Adding random brightness:
+![alt text][image5]
+![alt text][image6]
+![alt text][image7]
 
-## Adding ramdom shadow:
+### Adding ramdom shadow:
+![alt text][image8]
+![alt text][image9]
+![alt text][image10]
 
-## Adding horizontal shift
+### Adding horizontal shift
+![alt text][image11]
+![alt text][image12]
+![alt text][image13]
 
-
-## Flipping
+### Flipping
 
 After performing these augmentation, we ended up with 12779 samples.  After adding the flipped images, our data distribution looks like this.   It is still not the ideal balance of data I was going for but looks like these can work.
 
-![alt text][image7]
+Unflipped image
+![alt text][image14]
+
+Flipped image
+![alt text][image15]
 
 I used a 80-20 split on the data, 20% being used for validation.
 
