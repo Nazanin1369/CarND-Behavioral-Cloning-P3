@@ -52,7 +52,11 @@ python drive.py model.h5
 
 #### 3. Submission code is usable and readable
 
-The model.py file contains the code for training and saving the convolution neural network. The file shows the pipeline I used for training and validating the model, and it contains comments to explain how the code works.
+The **model.py** file contains the code for training and saving the convolution neural network. The file shows the pipeline I used for training and validating the model, and it contains comments to explain how the code works.
+I used checkpoint code to save the weights and biases of of each epoch run.  This code is based on techniques described in http://machinelearningmastery.com/check-point-deep-learning-models-keras/
+
+The **myutils.py** file contains the methods for loading and augmenting data.  It also contains methods to help visualize the data.
+
 
 ### Model Architecture and Training Strategy
 
