@@ -21,10 +21,12 @@ from keras.callbacks import ModelCheckpoint
 from myutils import *
 
 LEARNING_RATE = .0001
-EPOCHS = 1
+EPOCHS = 6
 
 MODEL_FILE = 'model.h5'
 
+# Used by Keras to load data by batches 
+# 
 def generator(samples, batch_size=32):
     num_samples = len(samples)
 
@@ -91,7 +93,9 @@ def get_model():
     return model    
 
 
-
+# main method where data is loaded, model is created and 
+# training of neural network is performed
+#
 def main():
 
     samples = get_driving_data(read_driving_log(DRIVING_LOG))
@@ -117,7 +121,7 @@ def main():
     print("Training the model ...")
 
     samples_per_epoch = len(train_samples)
-    #samples_per_epoch = en(train_samples) * 3
+    
     history_object = model.fit_generator(train_generator, samples_per_epoch =
         samples_per_epoch, validation_data = 
         validation_generator, callbacks=[early_stopping, checkpointer],
